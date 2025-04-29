@@ -49,28 +49,31 @@ class _ProductsSectionState extends State<ProductsSection> {
           return Column(
             children: [
               buildProductSectionHeader('All Products', context),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 0.85,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25 ),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 25,
+                    mainAxisSpacing: 25,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    return Obx(() => buildProductCard(
+                      product: product,
+                      size: size,
+                      isFavorite: wishlistController.isInWishlist(product.id),
+                      onFavoriteToggle: (newValue){
+                        wishlistController.toggleWishlist(product);
+                      }
+                    )
+                    );
+                  },
                 ),
-                itemCount: products.length,
-                itemBuilder: (context, index) {
-                  final product = products[index];
-                  return Obx(() => buildProductCard(
-                    product: product,
-                    size: size,
-                    isFavorite: wishlistController.isInWishlist(product.id),
-                    onFavoriteToggle: (newValue){
-                      wishlistController.toggleWishlist(product);
-                    }
-                  )
-                  );
-                },
               ),
             ],
           );

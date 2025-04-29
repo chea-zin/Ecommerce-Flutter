@@ -7,7 +7,7 @@ Widget buildProductCard({
   required Size size,
   required bool isFavorite,
   required Function(bool) onFavoriteToggle,
-}){
+}) {
   // Adjust the height and width for different screen sizes
   double imageHeight =
       size.height * 0.12; // Image height based on screen height
@@ -18,18 +18,17 @@ Widget buildProductCard({
   return Container(
     width: cardWidth, // Dynamic width
     decoration: BoxDecoration(
-      color: Color(0xfffffbf5),
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: [
-        BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 10),
-      ], // Shadow for better visibility
-    ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 10),
+        ]),
     child: Stack(
       children: [
         // Image container, using Flexible to adapt to available space
         Positioned(
           top: cardPadding * 2, // Dynamic top position
-          right: cardPadding * 8, // Dynamic right position
+          right: cardPadding * 5, // Dynamic right position
           child: Center(
             child: Container(
               height: imageHeight, // Dynamically set image height
@@ -72,7 +71,8 @@ Widget buildProductCard({
           right: 0,
           child: Padding(
             padding: EdgeInsets.all(cardPadding), // Dynamic padding
-            child: buildProductInfo(product), // Use the updated buildProductInfo
+            child:
+                buildProductInfo(product), // Use the updated buildProductInfo
           ),
         ),
         // Add to Cart icon next to the price

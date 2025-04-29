@@ -39,19 +39,19 @@ class NavigationExample extends StatelessWidget {
         selectedIndex: controller.currentPageIndex.value,
         destinations: <Widget>[
           const NavigationDestination(
-            selectedIcon: Icon(Icons.home, color:  Color(0xFF964B00), size: 40,),
+            selectedIcon: Icon(Icons.home, color:  Color(0xFF897662), size: 40,),
             icon: Icon(Icons.home_outlined, size: 30,),
             label: 'Home',
           ),
           const NavigationDestination(
-            selectedIcon: Icon(Icons.category, color: Color(0xFF964B00), size: 40),
+            selectedIcon: Icon(Icons.category, color: Color(0xFF897662), size: 40),
             icon: Icon(Icons.category_outlined, size: 30),
             label: 'Categories',
           ),
           NavigationDestination(
             selectedIcon: Transform.translate(
               offset: Offset(0, -10), // Adjust the vertical offset (negative value moves it up)
-              child: Icon(Icons.local_mall, color: Color(0xFF964B00), size: 70),
+              child: Icon(Icons.local_mall, color: Color(0xFF897662), size: 70),
             ),
             icon: Transform.translate(
               offset: Offset(0, -10), // Adjust the vertical offset (negative value moves it up)
@@ -60,12 +60,12 @@ class NavigationExample extends StatelessWidget {
             label: '',
           ),
           const NavigationDestination(
-            selectedIcon: Icon(Icons.favorite, color: Color(0xFF964B00), size: 40),
+            selectedIcon: Icon(Icons.favorite, color: Color(0xFF897662), size: 40),
             icon: Icon(Icons.favorite_border, size: 30),
             label: 'Wishlist',
           ),
           const NavigationDestination(
-            selectedIcon: Icon(Icons.person_outline, color: Color(0xFF964B00), size: 40),
+            selectedIcon: Icon(Icons.person_outline, color: Color(0xFF897662), size: 40),
             icon: Icon(Icons.person_outline, size: 30),
             label: 'Profile',
           ),

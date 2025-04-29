@@ -10,7 +10,7 @@ Widget buildProductInfo(Product product) {
         child: Text(product.title,
             style: TextStyle(fontSize: 18), overflow: TextOverflow.ellipsis),
       ),
-      const SizedBox(height: 30),
+      const SizedBox(height: 20),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Text("\$${product.price}",

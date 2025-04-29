@@ -110,7 +110,7 @@ class Mycarts extends StatelessWidget {
             }),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

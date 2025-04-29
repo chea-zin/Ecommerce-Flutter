@@ -18,15 +18,15 @@ Widget buildCategorySection(BuildContext context) {
             children: [
               buildCategoryItem(
                 context,
-                icon: '📱',
-                label: 'Electronics',
+                icon: '',
+                label: 'Desk',
                 onTap: () =>
                     Navigator.push(context, MaterialPageRoute(
                         builder: (context) => Electronics())),
               ),
               buildCategoryItem(
                 context,
-                icon: '🪑',
+                icon: '',
                 label: 'Chair',
                 onTap: () =>
                     Navigator.push(context,
@@ -34,13 +34,20 @@ Widget buildCategorySection(BuildContext context) {
               ),
               buildCategoryItem(
                 context,
-                icon: '🛋️',
+                icon: '',
                 label: 'Sofa',
                 onTap: () =>
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => Furniture())),
               ),
-
+              buildCategoryItem(
+                context,
+                icon: '',
+                label: 'Bedroom',
+                onTap: () =>
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Furniture())),
+              ),
             ],
           ),
         ),
