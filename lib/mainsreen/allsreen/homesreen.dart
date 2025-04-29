@@ -18,7 +18,7 @@ class _HomescreenState extends State<Homescreen> {
         .of(context)
         .size;
     return Scaffold(
-      backgroundColor: Color(0xfff0f1f1),
+      backgroundColor: Color(0xfff0f0f0),
       body: SafeArea(
         child: ListView(
           children: [

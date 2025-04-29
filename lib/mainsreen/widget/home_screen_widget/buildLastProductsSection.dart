@@ -1,4 +1,6 @@
 import 'package:ecommerce_rupp/controller/wishlist_controller.dart';
+import 'package:ecommerce_rupp/mainsreen/allsreen/detaile.dart';
+import 'package:ecommerce_rupp/mainsreen/widget/home_screen_widget/product_details.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ecommerce_rupp/Service/api_service.dart';
@@ -50,27 +52,39 @@ class _ProductsSectionState extends State<ProductsSection> {
             children: [
               buildProductSectionHeader('All Products', context),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25 ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25 ),
                 child: GridView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
+                    crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2,
                     crossAxisSpacing: 25,
-                    mainAxisSpacing: 25,
-                    childAspectRatio: 0.75,
+                    mainAxisSpacing: 20,
+                    childAspectRatio: 0.80,
                   ),
                   itemCount: products.length,
                   itemBuilder: (context, index) {
                     final product = products[index];
-                    return Obx(() => buildProductCard(
-                      product: product,
-                      size: size,
-                      isFavorite: wishlistController.isInWishlist(product.id),
-                      onFavoriteToggle: (newValue){
-                        wishlistController.toggleWishlist(product);
-                      }
-                    )
+                    return Obx(() => GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_)=> ProductDetailPages(product: product),
+                          ),
+                        );
+                      },
+                        child: buildProductCard(
+                            context: context,
+                            product: product,
+                            size: size,
+                            isFavorite: wishlistController.isInWishlist(product.id),
+                            onFavoriteToggle: (newValue){
+                              wishlistController.toggleWishlist(product);
+                            }
+                        )
+                    ),
+
                     );
                   },
                 ),

@@ -1,8 +1,12 @@
+import 'package:ecommerce_rupp/controller/mycart_controller.dart';
 import 'package:ecommerce_rupp/models/products.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'buildProductInfo.dart'; // Import the buildProductInfo widget
-
+final MyCartController cartController = Get.find();
 Widget buildProductCard({
+  required BuildContext context,
   required Product product,
   required Size size,
   required bool isFavorite,
@@ -12,11 +16,10 @@ Widget buildProductCard({
   double imageHeight =
       size.height * 0.12; // Image height based on screen height
   double imageWidth = size.width * 0.2; // Image width based on screen width
-  double cardWidth = size.width * 0.4; // Card width based on screen width
   double cardPadding = size.width * 0.02; // Dynamic padding
 
   return Container(
-    width: cardWidth, // Dynamic width
+    width: double.infinity, // Dynamic width
     decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(25),
@@ -28,7 +31,7 @@ Widget buildProductCard({
         // Image container, using Flexible to adapt to available space
         Positioned(
           top: cardPadding * 2, // Dynamic top position
-          right: cardPadding * 5, // Dynamic right position
+          right: cardPadding * 6, // Dynamic right position
           child: Center(
             child: Container(
               height: imageHeight, // Dynamically set image height
@@ -81,6 +84,10 @@ Widget buildProductCard({
           right: cardPadding * 2, // Dynamic right position
           child: IconButton(
             onPressed: () {
+              cartController.addToCart(product);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('${product.title} added to cart!')),
+              );
               // Add to cart functionality
             },
             icon: Icon(Icons.shopping_cart, color: Colors.black87, size: 30),

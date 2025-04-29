@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:ecommerce_rupp/controller/mycart_controller.dart';
 
 class Mycarts extends StatelessWidget {
-  final MyCartController controller = Get.put(MyCartController());
+  final MyCartController controller = Get.find<MyCartController>();
   final TextEditingController voucherCodeController = TextEditingController();
   final VoidCallback? onNavigateToCategories;
 
@@ -13,7 +13,7 @@ class Mycarts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Initialize the total price when the widget is built
-    controller.updateTotalPrice(controller.cartItems);
+    controller.updateTotalPrice();
     print('Cart items: ${controller.cartItems}');  // Add this for debugging
     return Scaffold(
       backgroundColor: Colors.white,
@@ -98,11 +98,7 @@ class Mycarts extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final item = controller.cartItems[index];
                   return ProductListCart(
-                    image: item["image"],
-                    name: item["name"],
-                    originalPrice: item["originalPrice"],
-                    discountPrice: item["discountPrice"],
-                    itemCount: item["quantity"],
+                    product: item,
                     index: index, // Pass the index to the ProductListCart widget
                   );
                 },
@@ -157,10 +153,10 @@ class Mycarts extends StatelessWidget {
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Obx(() => Text(
-                      "\$${(controller.finalTotal.value + controller.shippingCost.value).toStringAsFixed(2)}",
+                      "\$${controller.finalTotal.value.toStringAsFixed(2)}", // 👈 observe finalTotal instead
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold),
-                    ))
+                    )),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -196,4 +192,89 @@ class Mycarts extends StatelessWidget {
       ),
     );
   }
+
+  void showVoucherDialog(
+      MyCartController controller, TextEditingController voucherCodeController) {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 70),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Apply Voucher',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: voucherCodeController,
+              decoration: InputDecoration(
+                labelText: 'Enter Voucher Code',
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.grey,
+                    width: 1,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.grey.withAlpha(128),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.grey.withAlpha(200),
+                    width: 2,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Center(
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    String enteredCode = voucherCodeController.text;
+                    bool isSuccess = controller.applyVoucherCode(enteredCode);
+
+                    if (isSuccess) {
+                      Get.back(); // Close bottom sheet
+                    }
+
+                    Get.snackbar(
+                      "Voucher Status",
+                      controller.voucherMessage.value,
+                      snackPosition: SnackPosition.TOP,
+                      backgroundColor: isSuccess ? Colors.green : Colors.red,
+                      colorText: Colors.white,
+                      duration: const Duration(seconds: 4),
+                      animationDuration: const Duration(milliseconds: 800),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: const Text(
+                    'Apply',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+    );
+  }
+
 }

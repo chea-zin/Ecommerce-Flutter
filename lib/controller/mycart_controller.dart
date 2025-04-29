@@ -1,188 +1,89 @@
-import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
+import 'package:ecommerce_rupp/models/products.dart';
 
 class MyCartController extends GetxController {
+  var cartItems = <Product>[].obs;
+  var itemQuantities = <String, int>{}.obs; // ProductID → Quantity
   var cartTotal = 0.0.obs;
-  var discountApplied = false.obs;
-  var appliedVoucher = "".obs;
   var shippingCost = 2.5.obs;
-  var voucherMessage = "".obs; // Feedback message
+  var discountAmount = 0.0.obs;     // Discount from vouchers
   var finalTotal = 0.0.obs;
-  // List of valid vouchers with discount percentages
-  final Map<String, double> validVouchers = {
-    "SAVE10": 10.0, // 10% discount
-    "DISCOUNT20": 20.0, // 20% discount
-  };
+  var voucherMessage = ''.obs;
+  var voucherApplied = false.obs; //track if a voucher is already used
 
-  // Define cartItems as an observable list
-  var cartItems = <Map<String, dynamic>>[].obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-    updateTotalPrice(cartItems); // Ensure subtotal is updated
-
-    if (discountApplied.value && appliedVoucher.value.isNotEmpty) {
-      applyVoucherCode(appliedVoucher.value); // Reapply discount
+  void addToCart(Product product) {
+    final productId = product.id;
+    if (itemQuantities.containsKey(productId)) {
+      itemQuantities[productId] = itemQuantities[productId]! + 1; // Increment
+    } else {
+      cartItems.add(product);
+      itemQuantities[productId] = 1; // Initialize
     }
-    // Initialize cartItems with some data
-    cartItems.addAll([
-      {
-        "image": "assets/products/watch.png",
-        "name": "Loop Silicone Strong Magnetic Watch Band",
-        "originalPrice": 200.0,
-        "discountPrice": 150.0,
-        "quantity": 1,
-      },
-      {
-        "image": "assets/products/watch1.png",
-        "name": "Loop Silicone Strong Magnetic Watch Band",
-        "originalPrice": 250.0,
-        "discountPrice": 180.0,
-        "quantity": 1,
-      },
-    ]);
+    updateTotalPrice();
   }
 
-  void updateFinalTotal() {
-    double discountAmount =
-        (discountApplied.value && appliedVoucher.value.isNotEmpty)
-            ? (cartTotal.value * validVouchers[appliedVoucher.value]!) / 100
-            : 0;
-
-    finalTotal.value = cartTotal.value - discountAmount;
-  }
-
-  void updateTotalPrice(List<Map<String, dynamic>> cartItems) {
-    double total = 0.0;
-    for (var item in cartItems) {
-      double discountPrice = item["discountPrice"];
-      int quantity =
-          item["quantity"] ?? 1; // Default to 1 if quantity is not set
-      total += discountPrice * quantity;
+  void updateTotalPrice() {
+    double subtotal = 0.0;
+    for (var product in cartItems) {
+      final quantity = itemQuantities[product.id] ?? 1;
+      subtotal += double.parse(product.price) * quantity.toDouble();
     }
-    cartTotal.value = total;
-    updateFinalTotal(); //ensure that the final total is updated when the cart changes
+    cartTotal.value = subtotal;
+    finalTotal.value = cartTotal.value - discountAmount.value + shippingCost.value;
   }
 
-  bool applyVoucherCode(String enteredCode) {
-    if (discountApplied.value) {
+  void applyVoucher(double discountPercent) {
+    discountAmount.value = cartTotal.value * discountPercent / 100;
+    updateTotalPrice(); // Recalculate final total
+  }
+
+  void removeFromCart(int index) {
+    final product = cartItems[index];
+    itemQuantities.remove(product.id); // Remove quantity tracking
+    cartItems.removeAt(index); // Remove product
+    updateTotalPrice();
+  }
+
+  void updateQuantity(String productId, int newQuantity) {
+    if (newQuantity > 0) {
+      itemQuantities[productId] = newQuantity;
+    } else {
+      // Remove if quantity is 0
+      final index = cartItems.indexWhere((p) => p.id == productId);
+      if (index >= 0) {
+        cartItems.removeAt(index);
+        itemQuantities.remove(productId);
+      }
+    }
+    updateTotalPrice();
+  }
+
+  bool applyVoucherCode(String code) {
+    if (voucherApplied.value) {
       voucherMessage.value = "Voucher already applied!";
       return false;
     }
 
-    if (validVouchers.containsKey(enteredCode)) {
-      discountApplied.value = true;
-      appliedVoucher.value = enteredCode;
-      updateFinalTotal(); //update the final total after voucher code applied
-
-      voucherMessage.value =
-          "Voucher Applied! You saved \$${((cartTotal.value * validVouchers[enteredCode]!) / 100).toStringAsFixed(2)}";
-      return true; // Successful application
+    if (code == 'SAVE10') {
+      applyVoucher(10);
+      voucherMessage.value = "10% discount applied!";
+      voucherApplied.value = true;
+      return true;
+    } else if (code == 'SAVE20') {
+      applyVoucher(20);
+      voucherMessage.value = "20% discount applied!";
+      voucherApplied.value = true;
+      return true;
     } else {
-      voucherMessage.value = "Voucher Code is not valid";
-      return false; // Failed application
+      voucherMessage.value = "Invalid voucher code!";
+      return false;
     }
   }
-}
-
-void showVoucherDialog(
-    MyCartController controller, TextEditingController voucherCodeController) {
-  Get.bottomSheet(
-    Container(
-      padding: EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 70),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Apply Voucher',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 10),
-          TextField(
-            controller: voucherCodeController,
-            decoration: InputDecoration(
-              labelText: 'Enter Voucher Code',
-              border: OutlineInputBorder(
-                borderSide: BorderSide(
-                    color: Colors.grey.withAlpha(128)), // Transparent border
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                    color: Colors.grey.withAlpha(128)), // When not focused
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                    color: Colors.grey.withAlpha(200),
-                    width: 2), // When focused, less transparent
-              ),
-            ),
-          ),
-          SizedBox(height: 10),
-          Obx(() => Text(
-                controller.voucherMessage.value, // Display the feedback message
-                style: TextStyle(
-                  color: Colors.green, // Change color based on feedback
-                  fontWeight: FontWeight.bold,
-                ),
-              )),
-          const SizedBox(
-            height: 5,
-          ),
-          Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      String enteredCode = voucherCodeController.text;
-                      bool isSuccess = controller.applyVoucherCode(enteredCode);
-
-                      if (isSuccess) {
-                        Get.back(); // ⬅ Close the dialog immediately if successful
-                      }
-
-                      Get.snackbar(
-                        "Voucher Status",
-                        controller.voucherMessage.value,
-                        snackPosition: SnackPosition.TOP,
-                        backgroundColor: isSuccess ? Colors.green : Colors.red,
-                        colorText: Colors.white,
-                        duration: const Duration(seconds: 4),
-                        animationDuration: const Duration(milliseconds: 800),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors
-                            .black, // Set the button background color to black
-                        padding: EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14))),
-                    child: Text(
-                      'Apply',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-    isScrollControlled: true,
-  );
-}
-void removeFromCart(MyCartController controller, int index){
-  if(index >= 0 && index < controller.cartItems.length){
-    controller.cartItems.removeAt(index);
-    controller.updateTotalPrice(controller.cartItems); // Call the method to update the total
-    Get.snackbar('success', 'Product removed from cart');
+  void resetVoucher() {
+    discountAmount.value = 0.0;
+    voucherApplied.value = false;
+    voucherMessage.value = "";
+    updateTotalPrice();
   }
 }
-

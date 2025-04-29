@@ -3,16 +3,18 @@
 class Product {
   final String id;
   final String title;
-
+  final String description;
   final String image;
   final String price;
+
 
   Product({
     required this.id,
     required this.title,
-
+    required this.description,
     required this.image,
     required this.price,
+
   });
 
   // Optional: Add a factory constructor for JSON deserialization
@@ -22,6 +24,7 @@ class Product {
 
       title: json['name'],
       image: json['image_url'],
+      description: json['description'],
       price: json['price'],
     );
   }
@@ -32,6 +35,7 @@ class Product {
       'id': id,
       'name': title,
       'image': image,
+      'description': description
     };
   }
 }

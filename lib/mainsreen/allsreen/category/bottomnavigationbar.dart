@@ -51,7 +51,7 @@ class NavigationExample extends StatelessWidget {
           NavigationDestination(
             selectedIcon: Transform.translate(
               offset: Offset(0, -10), // Adjust the vertical offset (negative value moves it up)
-              child: Icon(Icons.local_mall, color: Color(0xFF897662), size: 70),
+              child: Icon(Icons.local_mall, color: Color(0xFF897662), size: 60),
             ),
             icon: Transform.translate(
               offset: Offset(0, -10), // Adjust the vertical offset (negative value moves it up)

@@ -23,7 +23,8 @@ class ApiService {
             id: product['_id'].toString(),
             title: product['name'].toString(),
             image: product['image_url'].toString(),
-            price: product['price'].toString(),
+            description: product['description'].toString(),
+            price: product['price'].toString()
 
         );
       }).toList();
